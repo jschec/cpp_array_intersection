@@ -1,5 +1,5 @@
 /**
- * IntersectionMethods.h 
+ * Intersection.h 
  *
  * Declarations and implementations for methods used for identifying common
  * elements between two vectors. Not seperated into .cpp file due to 
@@ -11,78 +11,9 @@
 #pragma once
 #include <vector>
 #include <thread>
+#include <pthread.h>
 #include <unordered_set>
 #include "container.h"
-
-
-/**
- * Searches the designated vector by one element at a time for the sought
- * value 
- * 
- * @param   vector      vector to be linearly searched
- * 
- * @param   startIdx    starting vector index to start search at
- * 
- * @param   endIdx      ending vector index to stop search at
- * 
- * @param   soughtVal   value to search for
- * 
- * @param   foundVal    status of the found value
- * 
- * @return  index of the first instance of the sought value, -1 otherwise
- * 
- */
-template <typename T>
-int linearSearch(const std::vector<T> &vector, int startIdx, int endIdx,
-    T soughtVal, bool &foundVal)
-{
-    if (startIdx > endIdx)
-    {
-        return -1;
-    }
-
-    for (int idx = startIdx; idx < endIdx; idx++)
-    {
-        if (vector[idx] == soughtVal)
-        {
-            // manipulates reference variable to flag for the finding of the 
-            // sought value
-            foundVal = true;
-            return idx;
-        }
-    }
-    // sought value has not been found
-    return -1;
-}
-
-/**
- * Searches the designated vector by one element at a time for the sought
- * value 
- * 
- * @param   vector      vector to be linearly searched
- * 
- * @param   startIdx    starting vector index to start search at
- * 
- * @param   endIdx      ending vector index to stop search at
- * 
- * @param   soughtVal   value to search for
- * 
- * @param   foundVal    status of the found value
- * 
- * @param   mtx         for locking threads
- * 
- * @return  index of the first instance of the sought value, -1 otherwise
- * 
- */
-int linearSearchThreaded(const std::vector<char> &vector, int startIdx, int endIdx,
-    char soughtVal, bool &foundVal, std::mutex &mtx)
-{
-    std::unique_lock<std::mutex> lock(mtx); // locking mtx mutex
-    int foundIdx = linearSearch<char>(vector, startIdx, endIdx, soughtVal, foundVal);
-    mtx.unlock();
-
-    return foundIdx;
-}
 
 /**
  * Recursively searches a sorted vector by repeatedly dividing the search
@@ -207,12 +138,9 @@ std::unordered_set<T> binaryIntersection(const std::vector<T> &vectOne,
 std::unordered_set<char> multiThreadedIntersection(const std::vector<char> &vectOne, 
     const std::vector<char> &vectTwo)
 {
-
      // hash set containing shared elements between both vectors
     std::unordered_set<char> sharedElementSet;
 
-    //unsigned num_threads = 5;
-    //std::vector<std::thread> threads(num_threads);
     Container<char> container(vectTwo, 5);
 
     for (unsigned idx = 0; idx < vectOne.size(); idx++) {
@@ -224,41 +152,6 @@ std::unordered_set<char> multiThreadedIntersection(const std::vector<char> &vect
         {
             sharedElementSet.insert(soughtVal);
         }
-        /*
-        int unitOfWork = vectTwo.size() / num_threads;
-        // flag for determining if the sought value was found in a search
-        // thread 
-        bool foundVal = false;
-
-        // divide second vector into different search threads
-        for (unsigned threadIdx = 0; threadIdx < threads.size();
-            threadIdx++)
-        {
-            // figure out calculation for these
-            int startSearchPos = threadIdx * unitOfWork;
-            int endSearchPos = (threadIdx + 1) * unitOfWork;
-
-            // is this necessary
-            if (threadIdx + 1 == num_threads)
-            {
-                endSearchPos = vectTwo.size();
-            }
-
-            threads[threadIdx] = std::thread(linearSearchThreaded, vectTwo,
-                startSearchPos, endSearchPos, std::ref(soughtVal, foundVal, mtx);
-        }
-
-        // synchronizes threads
-        for (unsigned idx = 0; idx < threads.size(); idx++)
-        {
-            threads[idx].join();
-        }
-
-        if (foundVal) 
-        {
-            sharedElementSet.insert(soughtVal);
-        }
-        */
     }
 
     return sharedElementSet;

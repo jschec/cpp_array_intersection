@@ -1,70 +1,28 @@
 #include <iostream>
 #include <cassert>
 #include <vector>
-#include "intersection.h"
+#include "Intersection.h"
+#include "SearchContainer.h"
 
 /**
- * Test linearSearch method for returning the correct index
- */ 
-void testLinearSearchFindValue()
-{
-    bool foundVal = false;
-    std::vector<char> testVect = {'a', 'd', 'e', 'd', 'j'};
-
-    int foundIdx = linearSearch<char>(testVect, 0, testVect.size(), '1', foundVal);
-    assert(foundIdx == -1);
-    assert(foundVal == false);
-
-    foundIdx = linearSearch<char>(testVect, 0, testVect.size(), 'a', foundVal);
-    assert(foundIdx == 0);
-    assert(foundVal == true);
-
-    // reset found status
-    foundVal = false;
-
-    foundIdx = linearSearch<char>(testVect, 0, testVect.size(), 'd', foundVal);
-    assert(foundIdx == 1);
-    assert(foundVal == true);
-
-    // reset found status
-    foundVal = false;
-
-    foundIdx = linearSearch<char>(testVect, 0, testVect.size(), 'j', foundVal);
-    assert(foundIdx == 4);
-    assert(foundVal == true);
-    std::cout << "Passed testLinearSearchFindValue()" << std::endl;
-}
-
-/**
- * Test linearSearch method for handling invalid search ranges
- */ 
-void testLinearSearchInvalidRange()
-{
-    bool foundVal = false;
-    std::vector<char> testVect = {'a', 'd', 'e', 'd'};
-
-    // start and end index are 0
-    int testOneFoundIdx = linearSearch<char>(testVect, 0, 0, 'a', foundVal);
-    assert(testOneFoundIdx == -1);
-    assert(foundVal == false);
-
-    // start index is greater than end index
-    int testTwoFoundIdx = linearSearch<char>(testVect, 10, 0, 'a', foundVal);
-    assert(testTwoFoundIdx == -1);
-    assert(foundVal == false);
-
-    std::cout << "Passed testLinearSearchInvalidRange()" << std::endl;
-}
-
-/**
- * Test binarySearch method for returning the correct index
- */ 
-void testBinarySearchFindValue()
+ * Test binarySearch method for returning the correct index when sought value
+ * is not available.
+ */
+void testBinarySearchNotAvailValue()
 {
     std::vector<char> testVect = {'a', 'c', 'd', 'e', 'j'};
-
     int foundIdx = binarySearch<char>(testVect, 0, testVect.size() - 1, '1');
     assert(foundIdx == -1);
+    std::cout << "Passed testBinarySearchNotAvailValue()" << std::endl;
+}
+
+/**
+ * Test binarySearch method for returning the correct index when sought value
+ * is available.
+ */
+void testBinarySearchAvailValue()
+{
+    std::vector<char> testVect = {'a', 'c', 'd', 'e', 'j'};
 
     foundIdx = binarySearch<char>(testVect, 0, testVect.size() - 1, 'a');
     assert(foundIdx == 0);
@@ -74,7 +32,7 @@ void testBinarySearchFindValue()
 
     foundIdx = binarySearch<char>(testVect, 0, testVect.size() - 1, 'j');
     assert(foundIdx == 4);
-    std::cout << "Passed testBinarySearchFindValue()" << std::endl;
+    std::cout << "Passed testBinarySearchAvailValue()" << std::endl;
 }
 
 /**
@@ -92,14 +50,13 @@ void testBinarySearchInvalidRange()
 }
 
 /**
- * Test bruteForceIntersection method with char vectors for returning the 
+ * Test bruteForceIntersection method with char vectors for returning the
  * correct number of matching characters
  */
 void testBruteForceIntersectionChar()
 {
     std::vector<char> testVectOne = {'a', 'd', 'e', 'd'};
     std::vector<char> testVectTwo = {'a', 'e', 'e'};
-    std::vector<char> testVectThree = {'d'};
 
     std::unordered_set<char> sharedElementsOne = bruteForceIntersection<char>(
         testVectOne, testVectTwo);
@@ -113,6 +70,52 @@ void testBruteForceIntersectionChar()
     assert(sharedElementsTwo.count('d') == 1);
 
     std::cout << "Passed testBruteForceIntersectionChar()" << std::endl;
+}
+
+/**
+ * Test bruteForceIntersection method with int vectors for returning the
+ * correct number of matching integers
+ */
+void testBruteForceIntersectionInt()
+{
+    std::vector<int> testVectOne = { 1, 4, 3, 2 };
+    std::vector<int> testVectTwo = { 3, 2, 1, 2 };
+    std::vector<int> testVectThree = { 1 };
+
+    std::unordered_set<int> sharedElementsOne = bruteForceIntersection<int>(
+        testVectOne, testVectTwo);
+    assert(sharedElementsOne.size() == 3);
+    assert(sharedElementsOne.count(1) == 1);
+    assert(sharedElementsOne.count(2) == 1);
+    assert(sharedElementsOne.count(3) == 1);
+
+    std::unordered_set<int> sharedElementsTwo = bruteForceIntersection<int>(
+        testVectOne, testVectThree);
+    assert(sharedElementsTwo.size() == 1);
+    assert(sharedElementsTwo.count(1) == 1);
+
+    std::cout << "Passed testBruteForceIntersectionInt()" << std::endl;
+}
+
+/**
+ * Test bruteForceIntersection method with char vectors for returning the
+ * correct number of matching characters when one of the vectors is empty
+ */
+void testBruteForceIntersectionEmpty()
+{
+    std::vector<char> testVectOne = {'a', 'd', 'e', 'd'};
+    std::vector<char> testVectTwo = {};
+    std::vector<char> testVectThree = {};
+
+    std::unordered_set<char> sharedElementsOne = bruteForceIntersection<char>(
+        testVectOne, testVectTwo);
+    assert(sharedElementsOne.size() == 0);
+
+    std::unordered_set<char> sharedElementsTwo = bruteForceIntersection<char>(
+        testVectTwo, testVectThree);
+    assert(sharedElementsTwo.size() == 0);
+
+    std::cout << "Passed testBruteForceIntersectionEmpty()" << std::endl;
 }
 
 /**
@@ -163,6 +166,10 @@ void testBinaryIntersectionChar()
     std::cout << "Passed testBinaryIntersectionChar()" << std::endl;
 }
 
+/**
+ * Test binaryIntersection method for returning the correct
+ * number of matching integers
+ */ 
 void testBinaryIntersectionInt()
 {
     std::vector<int> testVectOne = { 1, 2, 3, 4 };
@@ -185,12 +192,79 @@ void testBinaryIntersectionInt()
 }
 
 /**
- * Test multiThreadedIntersection method with char vectors for returning the 
- * correct number of matching characters
+ * Test bruteForceIntersection method with char vectors for returning the
+ * correct number of matching characters when one of the vectors is empty
  */
-void testMultiThreadedIntersectionChar()
+void testBinaryIntersectionEmpty()
 {
     std::vector<char> testVectOne = {'a', 'd', 'e', 'd'};
+    std::vector<char> testVectTwo = {};
+    std::vector<char> testVectThree = {};
+
+    std::unordered_set<char> sharedElementsOne = binaryIntersection<char>(
+        testVectOne, testVectTwo);
+    assert(sharedElementsOne.size() == 0);
+
+    std::unordered_set<char> sharedElementsTwo = binaryIntersection<char>(
+        testVectTwo, testVectThree);
+    assert(sharedElementsTwo.size() == 0);
+
+    std::cout << "Passed testBinaryIntersectionEmpty()" << std::endl;
+}
+
+/**
+ * Test find method from SearchContainer class in finding the sought character
+ * value
+ */
+void testSearchContainerFindChar()
+{
+    std::vector<char> testVectOne = {'a', 'l', 'e', 'z', 'q'};
+
+    SearchContainer<char> container(testVectOne, 3);
+    bool found = container.search('a');
+    assert(found == true);
+
+    found = container.search('1');
+    assert(found == false);
+
+    found = container.search('e');
+    assert(found == true);
+
+    found = container.search('q');
+    assert(found == true);
+    std::cout << "Passed testSearchContainerFindChar()" << std::endl;
+}
+
+/**
+ * Test find method from SearchContainer class in finding the sought integer
+ * value
+ */
+void testSearchContainerFindInt()
+{
+    std::vector<int> testVectOne = { 5, 4, 92, 21, 1};
+
+    SearchContainer<int> container(testVectOne, 3);
+    bool found = container.search(5);
+    assert(found == true);
+
+    found = container.search(4);
+    assert(found == false);
+
+    found = container.search(3);
+    assert(found == true);
+
+    found = container.search(2);
+    assert(found == true);
+    std::cout << "Passed testSearchContainerFindInt()" << std::endl;
+}
+
+/**
+ * Test multiThreadedIntersection method for returning the correct
+ * number of matching characters
+ */ 
+void testMultiThreadedIntersectionChar()
+{
+    std::vector<char> testVectOne = {'a', 'd', 'd', 'e'};
     std::vector<char> testVectTwo = {'a', 'e', 'e'};
     std::vector<char> testVectThree = {'d'};
 
@@ -204,7 +278,6 @@ void testMultiThreadedIntersectionChar()
         testVectOne, testVectThree);
     assert(sharedElementsTwo.size() == 1);
     assert(sharedElementsTwo.count('d') == 1);
-
     std::cout << "Passed testMultiThreadedIntersectionChar()" << std::endl;
 }
 
@@ -212,11 +285,10 @@ void testMultiThreadedIntersectionChar()
  * Test multiThreadedIntersection method for returning the correct
  * number of matching integers
  */ 
-/*
 void testMultiThreadedIntersectionInt()
 {
-    std::vector<int> testVectOne = { 1, 4, 3, 2 };
-    std::vector<int> testVectTwo = { 3, 2, 1, 2 };
+    std::vector<int> testVectOne = { 1, 2, 3, 4 };
+    std::vector<int> testVectTwo = { 1, 2, 2, 3 };
     std::vector<int> testVectThree = { 1 };
 
     std::unordered_set<int> sharedElementsOne = multiThreadedIntersection<int>(
@@ -233,70 +305,52 @@ void testMultiThreadedIntersectionInt()
 
     std::cout << "Passed testMultiThreadedIntersectionInt()" << std::endl;
 }
-*/
 
 /**
- * Test linearSearch method for handling invalid search ranges
- */ 
-/*
-void testLinearSearchThreadedFound()
+ * Test multiThreadedIntersection method with char vectors for returning the
+ * correct number of matching characters when one of the vectors is empty
+ */
+void testMultiThreadedIntersectionEmpty()
 {
-    bool foundVal = false;
-    std::vector<char> testVect = {'a', 'd', 'o', 'd', 'j', 'd', 'e', 'p'};
-    std::mutex mtx;
-    
-    std::thread testThreadOne(linearSearchThreaded, testVect, 0, 3, 'e', foundVal, mtx);
-    std::thread testThreadTwo(linearSearchThreaded, testVect, 4, 7, 'e', foundVal, mtx);
+    std::vector<char> testVectOne = {'a', 'd', 'e', 'd'};
+    std::vector<char> testVectTwo = {};
+    std::vector<char> testVectThree = {};
 
-    testThreadOne.join();
-    testThreadTwo.join();
+    std::unordered_set<char> sharedElementsOne = multiThreadedIntersection<char>(
+        testVectOne, testVectTwo);
+    assert(sharedElementsOne.size() == 0);
 
-    assert(foundVal == true);
-    std::cout << "Passed testLinearSearchThreadedFound()" << std::endl;
+    std::unordered_set<char> sharedElementsTwo = multiThreadedIntersection<char>(
+        testVectTwo, testVectThree);
+    assert(sharedElementsTwo.size() == 0);
+
+    std::cout << "Passed testMultiThreadedIntersectionEmpty()" << std::endl;
 }
-*/
-/**
- * Test linearSearch method for handling invalid search ranges
- */ 
-/*
-void testLinearSearchThreadedNotFound()
-{
-    bool foundVal = false;
-    std::vector<char> testVect = {'a', 'd', 'o', 'd', 'j', 'd', 'e', 'p'};
-    std::mutex mtx;
-    
-    std::thread testThreadOne(linearSearchThreaded, testVect, 0, 3, '1', foundVal, mtx);
-    std::thread testThreadTwo(linearSearchThreaded, testVect, 4, 7, '1', foundVal, mtx);
-
-    testThreadOne.join();
-    testThreadTwo.join();
-
-    assert(foundVal == false);
-    std::cout << "Passed testLinearSearchThreadedNotFound()" << std::endl;
-}
-*/
 
 int main()
 {
-    // Linear search unit testing
-    testLinearSearchFindValue();
-    testLinearSearchInvalidRange();
-
-    // Threaded Linear search unit testing
-    //testLinearSearchThreadedFound();
-    //testLinearSearchThreadedNotFound();
-
     // Binary search unit testing
-    testBinarySearchFindValue();
+    testBinarySearchNotAvailValue();
+    testBinarySearchAvailValue();
     testBinarySearchInvalidRange();
-
-    // bruteForceIntersection unit testing
-    testBruteForceIntersectionChar();
-    testBruteForceIntersectionInt();
 
     // binaryIntersection unit testing
     testBinaryIntersectionChar();
     testBinaryIntersectionInt();
+    testBinaryIntersectionEmpty();
 
+    // bruteForceIntersection unit testing
+    testBruteForceIntersectionChar();
+    testBruteForceIntersectionInt();
+    testBruteForceIntersectionEmpty();
+
+    // SearchContainer find method unit testing
+    testSearchContainerFindChar();
+    testSearchContainerFindInt();
+
+    // multiThreadedIntersection unit testing
     testMultiThreadedIntersectionChar();
+    testMultiThreadedIntersectionInt();
+    testMultiThreadedIntersectionEmpty();
+
 } // end test.cpp

@@ -12,7 +12,6 @@
 #pragma once
 #include <vector>
 #include <thread>
-#include <mutex>
 #include <math.h>
 
 /**
@@ -84,9 +83,6 @@ private:
      */
     void linearSearchThreaded(unsigned threadIdx)
     {
-        // locks thread
-        std::unique_lock<std::mutex> lock(mtx);
-        
         // calculate search ranges for each thread
         int startSearchPos = threadIdx * jobSize;
         int endSearchPos;
@@ -110,15 +106,11 @@ private:
                 break;
             }
         }
-        // unlocks thread
-        mtx.unlock();
     }
     /** value to be searched for */
     T soughtValue;
     /** vector to be searched */
     std::vector<T> searchVector;
-    /** used for locking threads */
-    std::mutex mtx;
     /** number of threads available */
     unsigned numThreads;
     /** length of elements assigned to each thread */

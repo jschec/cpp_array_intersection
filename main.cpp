@@ -1,42 +1,76 @@
+/**
+ * main.cpp
+ *
+ * Demonstrates a few approaches in identifying shared character values between
+ * two vectors
+ * 
+ * Joshua Scheck
+ * 2021-06-10
+ */
+
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <unordered_set>
 #include <chrono>
+#include <string>
+#include <algorithm>
 #include "Intersection.h"
 
-void timerOutput(std::time_t endTime,
-    std::chrono::duration<double> elapsedSeconds)
+/**
+ * Stops the timer and outputs the executation time and the current time to the
+ * output stream
+ * 
+ * @param   start   start time
+ */ 
+void timerOutput(std::chrono::time_point<std::chrono::system_clock> &start)
 {
-    endTime = std::chrono::system_clock::to_time_t(end);
-    std::cout << "finished computation at " << std::ctime(&endTime)
-              << "elapsed time: " << elapsedSeconds.count() << "s\n";
+    // timer variables
+    std::chrono::time_point<std::chrono::system_clock> end =
+        std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsedSeconds = end - start;
+
+    std::cout << "elapsed time - " << elapsedSeconds.count() << "s"
+        << std::endl;
 }
 
+/**
+ * Entry point to the program
+ */ 
 int main()
 {
-    // Stores 
+    std::chrono::time_point<std::chrono::system_clock> start;
     std::vector<char> vectOne;
     std::vector<char> vectTwo;
+    std::string fileOnePath;
+    std::string fileTwoPath;
+    char input;
 
-    // Timer variables
-    std::chrono::time_point<std::chrono::system_clock> start, end;
-    std::chrono::duration<double> elapsedSeconds;
-    std::time_t endTime;
+    std::cout << "Designate path first text document:" << std::endl;
+    std::cin >> fileOnePath;
 
-    std::cout << "Designate relative path first text document:" << std::endl;
-    
-    std::string filePathOne << std::cin;
-    std::ofstream myfile (filePathOne);
-    if (myfile.is_open())
+    std::ifstream textFileOne;
+    textFileOne.open(fileOnePath);
+    while (textFileOne.peek() != EOF)
     {
-        myfile << "This is a line.\n";
-        myfile << "This is another line.\n";
-        myfile.close();
+        textFileOne.get(input);
+        vectOne.push_back(input);
     }
+    textFileOne.close();
+    
+    std::cout << "Designate path second text document:" << std::endl;
+    std::cin >> fileTwoPath;
 
-    std::cout << "Designate relative path second text document:" << std::endl;
-    // read in second file here
+    std::ifstream textFileTwo;
+    textFileTwo.open(fileTwoPath);
+    while (textFileTwo.peek() != EOF)
+    {
+        textFileTwo.get(input);
+        vectTwo.push_back(input);
+    }
+    textFileTwo.close();
 
+    std::cout << std::endl;
     std::cout << "===================================" << std::endl;
     std::cout << "/ Shared characters demonstration /" << std::endl;
     std::cout << "===================================" << std::endl;
@@ -44,25 +78,38 @@ int main()
 
     std::cout << "Brute force (linear search): " << std::endl;
     start = std::chrono::system_clock::now();
-    bruteForceIntersection(vectOne, vectTwo);
-    end = std::chrono::system_clock::now();
-    elapsedSeconds = end - start;
-    endTime = std::chrono::system_clock::to_time_t(end);
-    timerOutput(endTime, elapsedSeconds);
+    std::unordered_set<char> bruteForceCommonChar = 
+        bruteForceIntersection(vectOne, vectTwo);
+    timerOutput(start);
+    std::cout << "common char count - " << bruteForceCommonChar.size()
+        << std::endl << std::endl;
+    
+    std::cout << "Multi-threaded linear search: " << std::endl;
+    start = std::chrono::system_clock::now();
+    std::unordered_set<char> multiThreadedCommonChar = 
+        multiThreadedIntersection(vectOne, vectTwo);
+    timerOutput(start);
+    std::cout << "common char count - " << multiThreadedCommonChar.size()
+        << std::endl << std::endl;
 
     std::cout << "Binary intersection (binary search): " << std::endl;
     start = std::chrono::system_clock::now();
-    binaryIntersection(vectOne, vectTwo);
-    end = std::chrono::system_clock::now();
-    elapsedSeconds = end - start;
-    endTime = std::chrono::system_clock::to_time_t(end);
-    timerOutput(endTime, elapsedSeconds);
+    std::sort(vectTwo.begin(), vectTwo.end());
+    std::unordered_set<char> binaryCommonChar = 
+        binaryIntersection(vectOne, vectTwo);
+    timerOutput(start);
+    std::cout << "common char count - " << binaryCommonChar.size()
+        << std::endl << std::endl;
+    
 
-    std::cout << "Multi-threaded linear search: " << std::endl;
-    start = std::chrono::system_clock::now();
-    multiThreadedIntersection(vectOne, vectTwo);
-    end = std::chrono::system_clock::now();
-    elapsedSeconds = end - start;
-    endTime = std::chrono::system_clock::to_time_t(end);
-    timerOutput(endTime, elapsedSeconds);
+    // write common characters out to ./common_characters.txt
+    std::ofstream outfile("./common_characters.txt");
+    for (auto itr = binaryCommonChar.begin(); itr != binaryCommonChar.end();
+        ++itr) {
+        std::cout << *itr;
+        outfile << *itr;
+    }
+    outfile.close();
+
+    return 0;
 }

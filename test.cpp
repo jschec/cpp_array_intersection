@@ -1,3 +1,12 @@
+/**
+ * test.cpp
+ *
+ * Unit tests for Intersection.h and SearchContainer.h methods
+ * 
+ * Joshua Scheck
+ * 2021-06-10
+ */
+
 #include <iostream>
 #include <cassert>
 #include <vector>
@@ -6,7 +15,7 @@
 
 /**
  * Test binarySearch method for returning the correct index when sought value
- * is not available.
+ * is NOT available.
  */
 void testBinarySearchNotAvailValue()
 {
@@ -24,7 +33,7 @@ void testBinarySearchAvailValue()
 {
     std::vector<char> testVect = {'a', 'c', 'd', 'e', 'j'};
 
-    foundIdx = binarySearch<char>(testVect, 0, testVect.size() - 1, 'a');
+    int foundIdx = binarySearch<char>(testVect, 0, testVect.size() - 1, 'a');
     assert(foundIdx == 0);
 
     foundIdx = binarySearch<char>(testVect, 0, testVect.size() - 1, 'd');
@@ -57,6 +66,7 @@ void testBruteForceIntersectionChar()
 {
     std::vector<char> testVectOne = {'a', 'd', 'e', 'd'};
     std::vector<char> testVectTwo = {'a', 'e', 'e'};
+    std::vector<char> testVectThree = {'d'};
 
     std::unordered_set<char> sharedElementsOne = bruteForceIntersection<char>(
         testVectOne, testVectTwo);
@@ -119,31 +129,6 @@ void testBruteForceIntersectionEmpty()
 }
 
 /**
- * Test bruteForceIntersection method for returning the correct
- * number of matching integers
- */ 
-void testBruteForceIntersectionInt()
-{
-    std::vector<int> testVectOne = { 1, 4, 3, 2 };
-    std::vector<int> testVectTwo = { 3, 2, 1, 2 };
-    std::vector<int> testVectThree = { 1 };
-
-    std::unordered_set<int> sharedElementsOne = bruteForceIntersection<int>(
-        testVectOne, testVectTwo);
-    assert(sharedElementsOne.size() == 3);
-    assert(sharedElementsOne.count(1) == 1);
-    assert(sharedElementsOne.count(2) == 1);
-    assert(sharedElementsOne.count(3) == 1);
-
-    std::unordered_set<int> sharedElementsTwo = bruteForceIntersection<int>(
-        testVectOne, testVectThree);
-    assert(sharedElementsTwo.size() == 1);
-    assert(sharedElementsTwo.count(1) == 1);
-
-    std::cout << "Passed testBruteForceIntersectionInt()" << std::endl;
-}
-
-/**
  * Test binaryIntersection method for returning the correct
  * number of matching characters
  */ 
@@ -192,7 +177,7 @@ void testBinaryIntersectionInt()
 }
 
 /**
- * Test bruteForceIntersection method with char vectors for returning the
+ * Test binaryIntersection method with char vectors for returning the
  * correct number of matching characters when one of the vectors is empty
  */
 void testBinaryIntersectionEmpty()
@@ -214,9 +199,9 @@ void testBinaryIntersectionEmpty()
 
 /**
  * Test find method from SearchContainer class in finding the sought character
- * value
+ * value in an odd lengthed vector
  */
-void testSearchContainerFindChar()
+void testSearchContainerFindCharOdd()
 {
     std::vector<char> testVectOne = {'a', 'l', 'e', 'z', 'q'};
 
@@ -232,7 +217,30 @@ void testSearchContainerFindChar()
 
     found = container.search('q');
     assert(found == true);
-    std::cout << "Passed testSearchContainerFindChar()" << std::endl;
+    std::cout << "Passed testSearchContainerFindCharOdd()" << std::endl;
+}
+
+/**
+ * Test find method from SearchContainer class in finding the sought character
+ * value in an even lengthed vector
+ */
+void testSearchContainerFindCharEven()
+{
+    std::vector<char> testVectOne = {'a', 'l', 'e', 'z', 's', 'q'};
+
+    SearchContainer<char> container(testVectOne, 3);
+    bool found = container.search('a');
+    assert(found == true);
+
+    found = container.search('1');
+    assert(found == false);
+
+    found = container.search('e');
+    assert(found == true);
+
+    found = container.search('q');
+    assert(found == true);
+    std::cout << "Passed testSearchContainerFindCharEven()" << std::endl;
 }
 
 /**
@@ -248,12 +256,12 @@ void testSearchContainerFindInt()
     assert(found == true);
 
     found = container.search(4);
-    assert(found == false);
-
-    found = container.search(3);
     assert(found == true);
 
-    found = container.search(2);
+    found = container.search(3);
+    assert(found == false);
+
+    found = container.search(1);
     assert(found == true);
     std::cout << "Passed testSearchContainerFindInt()" << std::endl;
 }
@@ -329,6 +337,12 @@ void testMultiThreadedIntersectionEmpty()
 
 int main()
 {
+    std::cout << std::endl;
+    std::cout << "===================================" << std::endl;
+    std::cout << "/       Executing unit tests      /" << std::endl;
+    std::cout << "===================================" << std::endl;
+    std::cout << std::endl;
+
     // Binary search unit testing
     testBinarySearchNotAvailValue();
     testBinarySearchAvailValue();
@@ -345,12 +359,13 @@ int main()
     testBruteForceIntersectionEmpty();
 
     // SearchContainer find method unit testing
-    testSearchContainerFindChar();
+    testSearchContainerFindCharOdd();
+    testSearchContainerFindCharEven();
     testSearchContainerFindInt();
 
     // multiThreadedIntersection unit testing
     testMultiThreadedIntersectionChar();
     testMultiThreadedIntersectionInt();
     testMultiThreadedIntersectionEmpty();
-
+    std::cout << std::endl;
 } // end test.cpp

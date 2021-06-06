@@ -2,8 +2,10 @@
  * Intersection.h 
  *
  * Declarations and implementations for methods used for identifying common
- * elements between two vectors. Not seperated into .cpp file due to 
- * template compilation errors.
+ * elements between two vectors.
+ * 
+ * Please note that the declarations and implementations are not kept in
+ * seperate files because of template compilation errors.
  * 
  * Joshua Scheck
  * 2021-06-10
@@ -11,9 +13,8 @@
 #pragma once
 #include <vector>
 #include <thread>
-#include <pthread.h>
 #include <unordered_set>
-#include "container.h"
+#include "SearchContainer.h"
 
 /**
  * Recursively searches a sorted vector by repeatedly dividing the search
@@ -135,18 +136,19 @@ std::unordered_set<T> binaryIntersection(const std::vector<T> &vectOne,
  * 
  * @return  Set of common elements shared between both vectors
  */ 
-std::unordered_set<char> multiThreadedIntersection(const std::vector<char> &vectOne, 
-    const std::vector<char> &vectTwo)
+template <typename T>
+std::unordered_set<T> multiThreadedIntersection(const std::vector<T> &vectOne, 
+    const std::vector<T> &vectTwo)
 {
      // hash set containing shared elements between both vectors
-    std::unordered_set<char> sharedElementSet;
+    std::unordered_set<T> sharedElementSet;
 
-    Container<char> container(vectTwo, 5);
+    SearchContainer<T> searchContainer(vectTwo, 5);
 
     for (unsigned idx = 0; idx < vectOne.size(); idx++) {
-        char soughtVal = vectOne[idx];
+        T soughtVal = vectOne[idx];
         
-        bool elementFound = container.search(soughtVal);
+        bool elementFound = searchContainer.search(soughtVal);
 
         if (elementFound) 
         {
@@ -155,4 +157,4 @@ std::unordered_set<char> multiThreadedIntersection(const std::vector<char> &vect
     }
 
     return sharedElementSet;
-} // end IntersectionMethods.h
+} // end Intersection.h

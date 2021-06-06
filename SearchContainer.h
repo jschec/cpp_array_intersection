@@ -1,7 +1,10 @@
 /**
  * SearchContainer.h 
  *
- * Declarations and implementations for SearchContainer class. 
+ * Declarations and implementations for SearchContainer class.
+ * 
+ * Please note that the declarations and implementations are not kept in
+ * seperate files because of template compilation errors.
  * 
  * Joshua Scheck
  * 2021-06-11
@@ -10,9 +13,11 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <math.h>
 
 /**
- * This class can be used for leveraging multi-thread linear searching of a vector
+ * This SearchContainer class allows for multi-threaded linear searching of
+ * the provided vector.
  */ 
 template<typename T>
 class SearchContainer
@@ -27,15 +32,17 @@ public:
     * @param    assignedThreads     number of threads assigned to assist with
     *                               searching
     */
-    SearchContainer(const std::vector<T> &sourceVector, unsigned assignedThreads) 
+    SearchContainer(const std::vector<T> &sourceVector,
+        unsigned assignedThreads)
     {
         searchVector = sourceVector;
         numThreads = assignedThreads;
-        jobSize =  sourceVector.size() / numThreads;
+        jobSize = std::round(sourceVector.size() / (float) numThreads);
     }
 
     /**
-     * Looks for the search value in the vector referenced in this SearchContainer
+     * Looks for the search value in the vector referenced in this
+     * SearchContainer
      * 
      * @param   searchValue     value to search for
      * 
@@ -60,7 +67,6 @@ public:
                 threads[idx] = std::thread(&SearchContainer<T>::linearSearchThreaded, this, idx);
             }
         }
-
         // synchronize threads
         for (unsigned idx = 0; idx < numThreads; idx++)
         {
@@ -92,10 +98,10 @@ private:
         }
         else 
         {
-            endSearchPos = (threadIdx + 1) * jobSize;
+            endSearchPos = startSearchPos + jobSize - 1;
         }
 
-        for (int idx = startSearchPos; idx < endSearchPos; idx++)
+        for (int idx = startSearchPos; idx <= endSearchPos; idx++)
         {
             if (searchVector[idx] == soughtValue)
             {
@@ -104,15 +110,14 @@ private:
                 break;
             }
         }
-
         // unlocks thread
         mtx.unlock();
     }
-    /** Value to be searched for */
+    /** value to be searched for */
     T soughtValue;
     /** vector to be searched */
     std::vector<T> searchVector;
-    /** for locking threads */
+    /** used for locking threads */
     std::mutex mtx;
     /** number of threads available */
     unsigned numThreads;

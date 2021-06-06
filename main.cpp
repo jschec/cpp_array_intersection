@@ -46,9 +46,11 @@ int main()
     std::string fileTwoPath;
     char input;
 
+    std::cout << std::endl;
     std::cout << "Designate path first text document:" << std::endl;
     std::cin >> fileOnePath;
 
+    // read file one into char vector
     std::ifstream textFileOne;
     textFileOne.open(fileOnePath);
     while (textFileOne.peek() != EOF)
@@ -61,6 +63,7 @@ int main()
     std::cout << "Designate path second text document:" << std::endl;
     std::cin >> fileTwoPath;
 
+    // read file two into another char vector
     std::ifstream textFileTwo;
     textFileTwo.open(fileTwoPath);
     while (textFileTwo.peek() != EOF)
@@ -76,6 +79,7 @@ int main()
     std::cout << "===================================" << std::endl;
     std::cout << std::endl;
 
+    // demonstrate time effeciency between approaches
     std::cout << "Brute force (linear search): " << std::endl;
     start = std::chrono::system_clock::now();
     std::unordered_set<char> bruteForceCommonChar = 
@@ -100,13 +104,11 @@ int main()
     timerOutput(start);
     std::cout << "common char count - " << binaryCommonChar.size()
         << std::endl << std::endl;
-    
 
     // write common characters out to ./common_characters.txt
     std::ofstream outfile("./common_characters.txt");
     for (auto itr = binaryCommonChar.begin(); itr != binaryCommonChar.end();
         ++itr) {
-        std::cout << *itr;
         outfile << *itr;
     }
     outfile.close();

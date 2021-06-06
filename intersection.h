@@ -143,7 +143,7 @@ std::unordered_set<T> multiThreadedIntersection(const std::vector<T> &vectOne,
      // hash set containing shared elements between both vectors
     std::unordered_set<T> sharedElementSet;
 
-    SearchContainer<T> searchContainer(vectTwo, 5);
+    SearchContainer<T> searchContainer(vectTwo, 3);
 
     for (unsigned idx = 0; idx < vectOne.size(); idx++) {
         T soughtVal = vectOne[idx];

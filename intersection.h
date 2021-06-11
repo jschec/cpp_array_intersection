@@ -110,12 +110,12 @@ std::unordered_set<T> bruteForceIntersection(const std::vector<T> &vectOne,
     const std::vector<T> &vectTwo)
 {
     // hash set containing shared elements between both vectors
-    std::unordered_set<char> sharedElementSet;
+    std::unordered_set<T> sharedElementSet;
 
-    for (int vectOneIdx = 0; vectOneIdx < vectOne.size();
+    for (unsigned vectOneIdx = 0; vectOneIdx < vectOne.size();
         vectOneIdx++)
     {
-        for (int vectTwoIdx = 0; vectTwoIdx < vectTwo.size(); 
+        for (unsigned vectTwoIdx = 0; vectTwoIdx < vectTwo.size(); 
             vectTwoIdx++)
         {
             if (vectOne[vectOneIdx] == vectTwo[vectTwoIdx])
@@ -147,7 +147,7 @@ std::unordered_set<T> binaryIntersection(const std::vector<T> &vectOne,
     // hash set containing shared elements between both vectors
     std::unordered_set<T> sharedElementSet;
 
-    for (int vectOneIdx = 0; vectOneIdx < vectOne.size();
+    for (unsigned vectOneIdx = 0; vectOneIdx < vectOne.size();
         vectOneIdx++)
     {
         T soughtVal = vectOne[vectOneIdx];
@@ -185,7 +185,7 @@ std::unordered_set<T> multiThreadedIntersection(const std::vector<T> &vectOne,
     int num_threads = 5;
     std::vector<std::thread> threads(num_threads);
 
-    for (int idx = 0; idx < vectOne.size(); idx++) {
+    for (unsigned idx = 0; idx < vectOne.size(); idx++) {
         T soughtVal = vectOne[idx];
         int unitOfWork = vectTwo.size() / num_threads;
         // flag for determining if the sought value was found in a search
@@ -193,7 +193,7 @@ std::unordered_set<T> multiThreadedIntersection(const std::vector<T> &vectOne,
         bool foundVal = false;
 
         // divide second vector into different search threads
-        for (int threadIdx = 0; threadIdx < threads.size();
+        for (unsigned threadIdx = 0; threadIdx < threads.size();
             threadIdx++)
         {
             // figure out calculation for these
@@ -211,7 +211,7 @@ std::unordered_set<T> multiThreadedIntersection(const std::vector<T> &vectOne,
         }
 
         // synchronizes threads
-        for (int idx = 0; idx < threads.size(); idx++)
+        for (unsigned idx = 0; idx < threads.size(); idx++)
         {
             threads[idx].join();
         }

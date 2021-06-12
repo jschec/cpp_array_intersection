@@ -75,7 +75,7 @@ int binarySearch(const std::vector<T> &vector, int leftIdx, int rightIdx,
 {
     if (rightIdx >= leftIdx) 
     {
-        int midIdx = leftIdx + (rightIdx - leftIdx) / 2;
+        int midIdx = (leftIdx + rightIdx) / 2;
  
         if (vector[midIdx] == soughtValue)
         {
@@ -156,7 +156,7 @@ std::unordered_set<T> binaryIntersection(const std::vector<T> &vectOne,
 
         // adds element to shared element set if a valid index is returned 
         // after conducting binary search
-        if (foundIdx != -1) 
+        if (foundIdx != -1)
         {
             sharedElementSet.insert(soughtVal);
         }

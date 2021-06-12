@@ -30,7 +30,6 @@ public:
     {
         searchVector = sourceVector;
         numThreads = assignedThreads;
-        threads = threads(numThreads);
         jobSize =  sourceVector.size() / numThreads;
     }
 
@@ -44,7 +43,14 @@ public:
         // initiate multi-threaded linear search
         for (unsigned idx = 0; idx < numThreads; idx++)
         {
-            threads[idx] = std::thread(linearSearchThreaded, idx);
+            if (threads.size() < numThreads) 
+            {
+                threads.push_back(std::thread(&Container::linearSearchThreaded, std::ref(idx)));
+            } 
+            else
+            {
+                threads[idx] = std::thread(&Container::linearSearchThreaded, std::ref(idx));
+            }
         }
 
         // synchronize threads
@@ -59,7 +65,7 @@ private:
     /**
      * 
      */
-    void linearSearchThreaded(int threadIdx)
+    void linearSearchThreaded(unsigned threadIdx)
     {
         // locks thread
         std::unique_lock<std::mutex> lock(mtx);

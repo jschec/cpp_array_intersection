@@ -10,6 +10,17 @@
 #include <unordered_set>
 #include <vector>
 #include "LinearSearchContainer.h"
+#include "SearchContainerBase.h"
+
+/**
+ * Constructor for LinearSearchContainer class, which initializes the source
+ * vector to search
+ * 
+ * @param    searchVector        vector of elements to be searched
+ */
+template<typename T>
+LinearSearchContainer<T>::LinearSearchContainer(
+	const std::vector<T> &searchVector) : SearchContainerBase<T>(searchVector) {};
 
 /**
  * Leverages linear search to determine common values between 
@@ -18,7 +29,8 @@
  * @param   targetVector the second vector of elements to be linearly searched 
  * 
  * @return  Set of common elements shared between both vectors
- */ 
+ */
+template<typename T>
 std::unordered_set<T> LinearSearchContainer::search(const std::vector<T> &targetVector)
 {
 	// hash set containing shared elements between both vectors
@@ -39,4 +51,8 @@ std::unordered_set<T> LinearSearchContainer::search(const std::vector<T> &target
 	}
 
 	return sharedElementSet;
-} // end LinearSearchContainer.cpp
+}
+
+template class LinearSearchContainer<int>;
+template class LinearSearchContainer<char>;
+// end LinearSearchContainer.cpp

@@ -10,16 +10,17 @@
 #include <unordered_set>
 #include <vector>
 #include "BinarySearchContainer.h"
+#include "SearchContainerBase.h"
 
 /**
  * Constructor for BinarySearchContainer class, which initializes the source
  * vector to search
  * 
- * @param    sourceVector        vector of elements to be searched
+ * @param    searchVector        vector of elements to be searched
  */
 template<typename T>
-BinarySearchContainer<T>::BinarySearchContainer(const std::vector<T> &sourceVector) :
-    SearchContainerBase(sourceVector) {}
+BinarySearchContainer<T>::BinarySearchContainer(const std::vector<T> &searchVector) :
+    SearchContainerBase<T>(searchVector) {}
 
 /**
  * Leverage binary search to determine common values between 
@@ -94,4 +95,6 @@ int BinarySearchContainer<T>::binarySearch(const std::vector<T> &vector, int lef
 
 	// sought value has not been found
 	return -1;
-} // end BinarySearchContainer.cpp
+}
+template class BinarySearchContainer<int>;
+template class BinarySearchContainer<char>;

@@ -16,12 +16,12 @@
  * Constructor for SearchContainerBase class, which initializes the source
  * vector to search
  * 
- * @param    sourceVector        vector of elements to be searched
+ * @param    searchVector        vector of elements to be searched
  */
 template<typename T>
-SearchContainerBase<T>::SearchContainerBase(const std::vector<T> &sourceVector)
+SearchContainerBase<T>::SearchContainerBase(const std::vector<T> &searchVector)
 {
-	searchVector = sourceVector;
+	sourceVector = searchVector;
 }
 
 // Specify data types that SearchContainerBase class can be used for

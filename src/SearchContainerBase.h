@@ -8,6 +8,7 @@
  */
 #pragma once
 #include <vector>
+#include <unordered_set>
 
 /**
  * This SearchContainerBase class allows for searching of the provided vector.
@@ -17,12 +18,12 @@ class SearchContainerBase
 {
 public:
 	/**
-	 * Constructor for SearchContainer class, which initializes the source
+     * Constructor for SearchContainerBase class, which initializes the source
      * vector to search
      * 
-     * @param    sourceVector        vector of elements to be searched
+     * @param    searchVector        vector of elements to be searched
      */
-    SearchContainerBase(const std::vector<T> &sourceVector);
+    SearchContainerBase(const std::vector<T> &searchVector);
 	
 	/**
 	 * Destructor for SearchContainerBase class
@@ -37,8 +38,8 @@ public:
      * @return  true if one of the threads has found the searchValue, false
      *          otherwise
      */ 
-    virtual bool search(const std::vector<T> &targetVector) = 0;
+    virtual std::unordered_set<T> search(const std::vector<T> &targetVector) = 0;
 protected:
     /** vector to be searched */
-    std::vector<T> searchVector;
+    std::vector<T> sourceVector;
 }; // end SearchContainerBase.h

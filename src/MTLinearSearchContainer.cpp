@@ -24,9 +24,8 @@
  */
 template<typename T>
 MTLinearSearchContainer<T>::MTLinearSearchContainer(const std::vector<T> &sourceVector,
-	unsigned assignedThreads)
+	unsigned assignedThreads) : SearchContainerBase<T>(sourceVector)
 {
-	searchVector = sourceVector;
 	numThreads = assignedThreads;
 }
 

@@ -19,6 +19,18 @@ template<typename T>
 class MTLinearSearchContainer : public SearchContainerBase<T>
 {
 public:
+    /**
+     * Constructor for MTLinearSearchContainer class, which initializes the searchVector
+     * and number of threads to be used for linear searching.
+     * 
+     * @param    sourceVector        vector of elements to be searched
+     * 
+     * @param    assignedThreads     number of threads assigned to assist with
+     *                               searching
+     */
+    MTLinearSearchContainer(const std::vector<T> &sourceVector,
+        unsigned assignedThreads);
+
 	/**
      * Constructor for MTLinearSearchContainer class, which initializes the 
 	 * searchVector and number of threads to be used for linear searching.
@@ -39,8 +51,8 @@ public:
 	 * 
 	 * @return  Set of common elements shared between both vectors
 	 */ 
-	std::unordered_set<T> search(const std::vector<T> &targetVector);
+	std::unordered_set<T> search(const std::vector<T> &targetVector) override;
 private:
     /** number of threads available */
     unsigned numThreads;
-} // end LinearSearchContainer.h
+}; // end LinearSearchContainer.h

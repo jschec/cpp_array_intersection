@@ -21,6 +21,14 @@ class BinarySearchContainer : public SearchContainerBase<T>
 {
 public:
 	/**
+	 * Constructor for BinarySearchContainer class, which initializes the source
+	 * vector to search
+	 * 
+	 * @param    sourceVector        vector of elements to be searched
+	 */
+	BinarySearchContainer(const std::vector<T> &sourceVector);
+
+	/**
 	 * Leverage binary search to determine common values between 
 	 * source and target vectors.
 	 * 
@@ -30,7 +38,7 @@ public:
 	 * 
 	 * @return  Set of common elements shared between both vectors
 	 */ 
-	std::unordered_set<T> search(const std::vector<T> &targetVector);
+	std::unordered_set<T> search(const std::vector<T> &targetVector) override;
 private:
 	/**
 	 * Recursively searches a sorted vector by repeatedly dividing the search
@@ -48,4 +56,4 @@ private:
 	 */
 	int binarySearch(const std::vector<T> &vector, int leftIdx, int rightIdx,
 		T soughtValue);
-} // end BinarySearchContainer.h
+}; // end BinarySearchContainer.h

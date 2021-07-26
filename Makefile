@@ -1,17 +1,29 @@
-CXX         = g++
-CXXFLAGS    = -g -Wall -pthread -std=c++11
+CC := g++ # This is the main compiler
+# CC := clang --analyze # and comment out the linker last line for sanity
+SRCDIR := src
+BUILDDIR := build
+TARGET := bin/runner
+ 
+SRCEXT := cpp
+SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
+OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
+CFLAGS := -g # -Wall
+LIB := -pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
+INC := -I include
 
-PROG_NAME   = prog
-SRC_DIR     = ./src
-BUILD_DIR   = ./build
-BIN_DIR     = ./bin
+$(TARGET): $(OBJECTS)
+	@echo " Linking..."
+	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
 
-CXXFLAGS = -g -Wall -pthread -std=c++11
+$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+	@mkdir -p $(BUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
-main: main.o
-	$(CXX) $(CXXFLAGS) -o $(SRC_DIR)/main main.o
-test: test.o
-	$(CXX) $(CXXFLAGS) -o $(SRC_DIR)/test test.o 
 clean:
-	rm -f core *.o main test common_characters.txt
-	
+	@echo " Cleaning..."; 
+	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
+
+test:
+	$(CC) $(CFLAGS) test/test.cpp $(INC) $(LIB) -o bin/test
+
+.PHONY: clean
